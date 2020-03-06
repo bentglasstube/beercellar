@@ -9,15 +9,43 @@ use JSON::XS;
 use Plack::App::File;
 use Plack::Builder;
 use Plack::Request;
-use Plack::Middleware::REST;
 
 my $dbh = DBI->connect('dbi:SQLite:data.db', '', '', { sqlite_unicode => 1 })
   or die "Cannot connect to databse";
 
-sub query_app {
-  my ($query, $args, $post) = @_;
+my %handlers = (
+  select_single => sub {
+    my ($req, $sth) = @_;
+    my $data = $sth->fetchall_arrayref({});
 
-  say STDERR "Making app from $query";
+    if (@$data) {
+      my $resp = $req->new_response(200);
+      $resp->content_type('application/json');
+      $resp->body(encode_json($data->[0]));
+      return $resp;
+    } else {
+      return $req->new_response(404);
+    };
+  },
+
+  select_list => sub {
+    my ($req, $sth) = @_;
+    my $data = $sth->fetchall_arrayref({});
+
+    my $resp = $req->new_response(200);
+    $resp->content_type('application/json');
+    $resp->body(encode_json($data));
+    return $resp;
+  },
+
+  nonselect => sub {
+    my ($req, $sth) = @_;
+    return $req->new_response(204);
+  },
+);
+
+sub query_app {
+  my ($query, $args, $handler) = @_;
 
   my $sth = $dbh->prepare($query);
   return sub {
@@ -30,7 +58,7 @@ sub query_app {
     my @bindings = map { $req->parameters->get($_) } @$args;
 
     if ($sth->execute(@bindings)) {
-      my $resp = $post->($req, $sth);
+      my $resp = $handler->($req, $sth);
       $sth->finish();
       return $resp->finalize;
     } else {
@@ -42,75 +70,7 @@ sub query_app {
   };
 }
 
-my $results_post = sub {
-  my ($req, $sth) = @_;
-  my $data = $sth->fetchall_arrayref({});
-
-  if (@$data) {
-    my $resp = $req->new_response(200);
-    $resp->content_type('application/json');
-    $resp->body(encode_json($data));
-    return $resp;
-  } else {
-    return $req->new_response(404);
-  }
-};
-
-
-sub rest_app {
-  my ($table) = @_;
-
-  return builder {
-    enable 'REST',
-      get => query_app(
-        "select * from $table->{name} where $table->{primary_key} = ?",
-        [ 'id' ], $results_post),
-
-      delete => query_app(
-        "delete from $table->{name} where $table->{primary_key} = ?",
-        ['id'],
-        sub {
-          my ($req, $sth) = @_;
-          return $req->new_response(204);
-        }),
-
-      create => query_app(
-        "insert into $table->{name} (" .
-        join(', ', @{$table->{columns}}) . ") values (" .
-        join(', ', ('?') x @{$table->{columns}}) . ")",
-        $table->{columns},
-        sub {
-          my ($req, $sth) = @_;
-          return $req->new_response(204);
-        }),
-
-      list => query_app(
-        "select * from $table->{name}",
-        [],
-        sub {
-          my ($req, $sth) = @_;
-          my $data = $sth->fetchall_arrayref({});
-          my $resp = $req->new_response(200);
-          $resp->content_type('application/json');
-          $resp->body(encode_json($data));
-          return $resp;
-        });
-    };
-}
-
 builder {
-  mount '/crud/beer' => rest_app({
-      name => 'beer',
-      primary_key => 'beer_id',
-      columns => [qw[name year style brewery_id abv]],
-    });
-
-  mount '/crud/bottle' => rest_app({
-      name => 'bottle',
-      primary_key => 'bottle_id',
-      columns => [qw[size location]],
-    });
-
   mount '/api/beers' => query_app(q{
     select
       beer.beer_id as id,
@@ -125,7 +85,7 @@ builder {
     join brewery using (brewery_id)
     group by beer.beer_id
     order by beer.name
-  }, [], $results_post);
+  }, [], $handlers{select_list});
 
   mount '/' => Plack::App::File->new()->to_app;
 };

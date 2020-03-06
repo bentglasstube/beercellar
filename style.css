@@ -1,0 +1,9 @@
+tr.info {
+  text-align: center;
+  color: #bbb;
+  font-style: italic;
+}
+
+td.r, th.r {
+  text-align: right;
+}

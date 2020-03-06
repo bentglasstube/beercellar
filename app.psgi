@@ -6,11 +6,12 @@ use warnings;
 
 use DBI;
 use JSON::XS;
+use Plack::App::File;
 use Plack::Builder;
 use Plack::Request;
 use Plack::Middleware::REST;
 
-my $dbh = DBI->connect('dbi:SQLite:data.db', '', '')
+my $dbh = DBI->connect('dbi:SQLite:data.db', '', '', { sqlite_unicode => 1 })
   or die "Cannot connect to databse";
 
 sub query_app {
@@ -41,6 +42,21 @@ sub query_app {
   };
 }
 
+my $results_post = sub {
+  my ($req, $sth) = @_;
+  my $data = $sth->fetchall_arrayref({});
+
+  if (@$data) {
+    my $resp = $req->new_response(200);
+    $resp->content_type('application/json');
+    $resp->body(encode_json($data));
+    return $resp;
+  } else {
+    return $req->new_response(404);
+  }
+};
+
+
 sub rest_app {
   my ($table) = @_;
 
@@ -48,20 +64,7 @@ sub rest_app {
     enable 'REST',
       get => query_app(
         "select * from $table->{name} where $table->{primary_key} = ?",
-        [ 'id' ],
-        sub {
-          my ($req, $sth) = @_;
-          my $data = $sth->fetchall_arrayref({});
-
-          if (@$data) {
-            my $resp = $req->new_response(200);
-            $resp->content_type('application/json');
-            $resp->body(encode_json($data));
-            return $resp;
-          } else {
-            return $req->new_response(404);
-          }
-        }),
+        [ 'id' ], $results_post),
 
       delete => query_app(
         "delete from $table->{name} where $table->{primary_key} = ?",
@@ -96,15 +99,33 @@ sub rest_app {
 }
 
 builder {
-  mount '/beer' => rest_app({
+  mount '/crud/beer' => rest_app({
       name => 'beer',
       primary_key => 'beer_id',
       columns => [qw[name year style brewery_id abv]],
     });
 
-  mount '/bottle' => rest_app({
+  mount '/crud/bottle' => rest_app({
       name => 'bottle',
       primary_key => 'bottle_id',
       columns => [qw[size location]],
     });
+
+  mount '/api/beers' => query_app(q{
+    select
+      beer.beer_id as id,
+      beer.name,
+      beer.year,
+      brewery.name as brewery,
+      beer.style,
+      beer.abv,
+      count(bottle.beer_id) as quantity
+    from bottle
+    join beer using (beer_id)
+    join brewery using (brewery_id)
+    group by beer.beer_id
+    order by beer.name
+  }, [], $results_post);
+
+  mount '/' => Plack::App::File->new()->to_app;
 };

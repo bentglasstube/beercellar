@@ -1,21 +1,18 @@
-create table if not exists brewery (
+CREATE TABLE brewery (
   brewery_id integer primary key autoincrement,
-  name string not null unique
+  name text not null unique
 );
-
-create table if not exists beer (
+CREATE TABLE sqlite_sequence(name,seq);
+CREATE TABLE beer (
   beer_id integer primary key autoincrement,
-  name string not null,
+  name text not null,
   brewery_id integer not null references brewery (brewery_id),
-  style string not null,
+  style text not null,
   abv float not null
-);
-
-create table if not exists bottle (
+, year integer);
+CREATE TABLE bottle (
   bottle_id integer primary key autoincrement,
   beer_id integer references beer (beer_id),
   size integer not null,
-  location string not null
+  location text not null
 );
-
-alter table beer add column year integer;

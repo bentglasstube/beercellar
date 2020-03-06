@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <title>Beer Cellar</title>
+  </head>
+  <body>
+    <div class="container">
+      <nav class="navbar navbar-dark bg-dark">
+        <a class="navbar-brand" href="/">Beer Cellar</a>
+        <form class="form-inline">
+          <input id="q" class="form-control" type="search" placeholder="Search" aria-label="Search" autofocus>
+        </form>
+      </nav>
+
+      <table id="beers" class="table table-sm table-hover">
+        <thead>
+          <tr>
+            <th>Beer</th>
+            <th>Brewery</th>
+            <th>Style</th>
+            <th class="r">ABV</th>
+            <th class="r">Qty</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="info"><td colspan="5">Loading&hellip;</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="cellar.js"></script>
+  </body>
+</html>

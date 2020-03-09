@@ -5,3 +5,5 @@ plugins:
   Database:
     driver: 'SQLite'
     database: 'data.db'
+
+logger: 'Console'

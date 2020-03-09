@@ -7,3 +7,26 @@ tr.info {
 td.r, th.r {
   text-align: right;
 }
+
+.beer-info {
+  float: right;
+  width: 18rem;
+  margin-top: -2rem;
+}
+
+.bottles {
+  list-style: none;
+  display: flex;
+  padding-left: 0;
+}
+
+.bottles li {
+  display: inline;
+  margin: 1rem;
+}
+
+.bottles button img {
+  text-align: center;
+  display: block;
+  border: none;
+}

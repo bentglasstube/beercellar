@@ -1,0 +1,28 @@
+<h1>[% beer.name %]</h1>
+
+<div class="card beer-info">
+  <dl class="card-body">
+    <dt>Brewery</dt>
+    <dd>[% beer.brewery %]</dd>
+    <dt>Style</dt>
+    <dd>[% beer.style %]</dd>
+    <dt>ABV</dt>
+    <dd>[% beer.abv |format('%.1f') %]%</dd>
+  </dl>
+</div>
+
+<p>[ TODO - add beer descriptions ]</p>
+
+[% IF bottles %]
+<h2>Bottles Available</h2>
+<ul class="bottles">
+  [% FOREACH bottle IN bottles %]
+  <li>
+    <button data-id="[% bottle.bottle_id %]" class="btn btn-outline-dark btn-sm">
+      <img src="/size[% bottle.size %].svg" alt="[% bottle.size %]">
+      [% bottle.location %]
+    </button>
+  </li>
+  [% END %]
+</ul>
+[% END %]

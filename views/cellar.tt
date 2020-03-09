@@ -11,7 +11,7 @@
   <tbody>
     [% FOREACH beer IN beers.nsort('name') %]
     <tr>
-      <td>[% beer.name %]</td>
+      <td><a href="/beer/[% beer.id %]">[% beer.name %]</a></td>
       <td>[% beer.brewery %]</td>
       <td>[% beer.style %]</td>
       <td class="r">[% beer.abv | format('%.1f') %]%</td>

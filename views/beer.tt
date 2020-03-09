@@ -1,4 +1,4 @@
-<h1>[% beer.name %]</h1>
+<h1>[% beer.name %][% IF beer.year %] - [% beer.year %][% END %]</h1>
 
 <div class="card beer-info">
   <dl class="card-body">

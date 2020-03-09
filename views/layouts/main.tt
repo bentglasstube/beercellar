@@ -16,23 +16,11 @@
         </form>
       </nav>
 
-      <table id="beers" class="table table-sm table-hover">
-        <thead>
-          <tr>
-            <th>Beer</th>
-            <th>Brewery</th>
-            <th>Style</th>
-            <th class="r">ABV</th>
-            <th class="r">Qty</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="info"><td colspan="5">Loading&hellip;</td></tr>
-        </tbody>
-      </table>
+      [% content %]
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="cellar.js"></script>
   </body>
 </html>
+

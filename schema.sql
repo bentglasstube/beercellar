@@ -2,7 +2,6 @@ CREATE TABLE brewery (
   brewery_id integer primary key autoincrement,
   name text not null unique
 );
-CREATE TABLE sqlite_sequence(name,seq);
 CREATE TABLE beer (
   beer_id integer primary key autoincrement,
   name text not null,

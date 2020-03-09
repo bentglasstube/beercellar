@@ -1,7 +1,6 @@
 requires 'perl', '5.024';
 
-requires 'DBI';
-requires 'JSON::XS';
-requires 'Plack';
-requires 'Plack::Builder';
-requires 'Plack::Middleware::REST';
+requires 'Dancer2';
+requires 'Dancer2::Plugin::Database';
+requires 'DBD::SQLite';
+requires 'Template';

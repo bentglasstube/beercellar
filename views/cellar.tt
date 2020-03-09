@@ -1,0 +1,22 @@
+<table id="beers" class="table table-sm table-hover">
+  <thead>
+    <tr>
+      <th>Beer</th>
+      <th>Brewery</th>
+      <th>Style</th>
+      <th class="r">ABV</th>
+      <th class="r">Qty</th>
+    </tr>
+  </thead>
+  <tbody>
+    [% FOREACH beer IN beers.nsort('name') %]
+    <tr>
+      <td>[% beer.name %]</td>
+      <td>[% beer.brewery %]</td>
+      <td>[% beer.style %]</td>
+      <td class="r">[% beer.abv | sprintf('%.1f') %]%</td>
+      <td class="r">[% beer.quantity %]</td>
+    </tr>
+    [% END %]
+  </tbody>
+</table>

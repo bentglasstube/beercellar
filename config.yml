@@ -1,0 +1,7 @@
+layout: 'main'
+template: 'template_toolkit'
+
+plugins:
+  Database:
+    driver: 'SQLite'
+    database: 'data.db'

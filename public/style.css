@@ -1,3 +1,7 @@
+body {
+  padding-top: 5rem;
+}
+
 tr.info {
   text-align: center;
   color: #bbb;
@@ -11,7 +15,7 @@ td.r, th.r {
 .beer-info {
   float: right;
   width: 18rem;
-  margin-top: -2rem;
+  margin-top: -4rem;
 }
 
 .bottles {

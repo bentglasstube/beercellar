@@ -15,7 +15,6 @@
 <p>[ TODO - add beer descriptions ]</p>
 
 [% IF bottles %]
-<h2>Bottles Available</h2>
 <ul class="bottles">
   [% FOREACH bottle IN bottles %]
   <li>

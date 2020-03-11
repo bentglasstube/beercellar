@@ -3,6 +3,19 @@
 use Dancer2;
 use Dancer2::Plugin::Database;
 
+sub find_or_create_brewery {
+  my $name = shift;
+
+  my $id = database->quick_lookup(brewery => { name => $name }, 'brewery_id');
+
+  unless ($id) {
+    database->quick_insert('brewery', { name => $name });
+    my $id = database->last_insert_id();
+  }
+
+  return $id;
+}
+
 hook before_template_render => sub {
   my $tokens = shift;
   $tokens->{q} = query_parameters->get('q');
@@ -61,6 +74,17 @@ get '/beer/:id' => sub {
   }
 };
 
+get '/beer' => sub {
+  template 'beer-form.tt', { verb => 'Add' };
+};
+
+post '/beer' => sub {
+  my %args = map { $_ => body_parameters->get($_) } qw[name year style abv];
+  $args{brewery_id} = find_or_create_brewery(body_parameters->get('brewery'));
+  database->quick_insert('beer', \%args);
+  redirect '/beer/' . database->last_insert_id();
+};
+
 get '/beer/:id/edit' => sub {
   my $id = route_parameters->get('id');
 
@@ -77,24 +101,9 @@ get '/beer/:id/edit' => sub {
 post '/beer/:id/edit' => sub {
   my $id = route_parameters->get('id');
 
-  my $brewery_id = body_parameters->get('brewery_id');
-
-  unless ($brewery_id) {
-    my $name = body_parameters->get('brewery');
-    database->quick_insert('brewery', { name => $name });
-    $brewery_id = database->quick_lookup(brewery => { name => $name }, 'brewery_id');
-  }
-
-  database->quick_update(
-    'beer', { beer_id => $id },
-    {
-      name => body_parameters->get('name'),
-      year => body_parameters->get('year'),
-      brewery_id => $brewery_id,
-      style => body_parameters->get('style'),
-      abv => body_parameters->get('abv'),
-    }
-  );
+  my %args = map { $_ => body_parameters->get($_) } qw[name year style abv];
+  $args{brewery_id} = find_or_create_brewery(body_parameters->get('brewery'));
+  database->quick_update('beer', { beer_id => $id }, \%args);
 
   redirect "/beer/$id";
 };
@@ -105,10 +114,6 @@ del '/bottle/:id' => sub {
   # TODO authorization
   database->quick_delete('bottle', { bottle_id => $id });
   send_error('', 204);
-};
-
-get '/beer' => sub {
-  template 'beer-form.tt', { verb => 'Add' };
 };
 
 dance;

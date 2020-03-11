@@ -1,9 +1,6 @@
 <h1>[% verb %] Beer</h1>
 
 <form class="beer" method="post">
-  <input type="hidden" name="beer_id" id="beer-id" value="[% beer.beer_id %]">
-  <input type="hidden" name="brewery_id" id="brewery-id" value="[% brewery.brewery_id %]">
-
   <div class="form-row">
     <div class="form-group col-md-8">
       <label for="name">Name</label>

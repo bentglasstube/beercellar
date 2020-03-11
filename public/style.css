@@ -13,19 +13,23 @@ td.r, th.r {
 }
 
 .beer-info {
-  float: right;
   width: 18rem;
-  margin-top: -4rem;
+  float: right;
+}
+
+h1 {
+  border-bottom: 1px solid #ddd;
 }
 
 .bottles {
   list-style: none;
   display: flex;
   padding-left: 0;
+  justify-content: start;
+  flex-wrap: wrap;
 }
 
 .bottles li {
-  display: inline;
   margin: 1rem;
 }
 

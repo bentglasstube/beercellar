@@ -25,5 +25,6 @@ $(function() {
       method: 'DELETE',
       success: function(data, st, xhr) { btn.parent().fadeOut(); },
     });
+    e.preventDefault();
   });
 });

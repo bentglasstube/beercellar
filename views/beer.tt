@@ -3,12 +3,13 @@
 <div class="card beer-info">
   <dl class="card-body">
     <dt>Brewery</dt>
-    <dd>[% beer.brewery %]</dd>
+    <dd>[% brewery.name %]</dd>
     <dt>Style</dt>
     <dd>[% beer.style %]</dd>
     <dt>ABV</dt>
     <dd>[% beer.abv |format('%.1f') %]%</dd>
   </dl>
+  <a href="/beer/[% beer.beer_id %]/edit" class="btn btn-link">Edit</a>
 </div>
 
 <p>[ TODO - add beer descriptions ]</p>
@@ -26,3 +27,18 @@
   [% END %]
 </ul>
 [% END %]
+
+<form method="post" class="form-inline">
+  <input type="hidden" name="beer_id" value="[% beer.beer_id %]">
+
+  <label class="sr-only" for="size">Size</label>
+  <div class="input-group mb-1 mr-sm-1">
+    <input type="number" class="form-control" id="size" name="size" placeholder="Size">
+    <div class="input-group-append">
+      <span class="input-group-text">mL</span>
+    </div>
+  </div>
+  <label class="sr-only" for="loc">Location</label>
+  <input type="text" class="form-control mb-1 mr-sm-1" id="loc" name="location" placeholder="Location">
+  <button class="btn btn-primary mb-1">Add Bottle</button>
+</form>

@@ -45,29 +45,58 @@ get '/' => sub {
 get '/beer/:id' => sub {
   my $id = route_parameters->get('id');
 
-  my $beer = database->prepare(q{
-    select beer.*, brewery.name as brewery
-    from beer join brewery using (brewery_id)
-    where beer_id = ?
-  });
+  my $beer = database->quick_select(beer => { beer_id => $id });
 
-  $beer->execute($id);
-  my $data = $beer->fetchrow_hashref();
-  $beer->finish();
-
-  debug "Looking for beer $id: $data";
-
-  if ($data) {
-    my $bottles = database->prepare('select * from bottle where beer_id = ?');
-    $bottles->execute($id);
+  if ($beer) {
+    my $brewery = database->quick_select(brewery => { brewery_id => $beer->{brewery_id} });
+    my @bottles = database->quick_select(bottle => { beer_id => $id });
 
     template 'beer.tt', {
-      beer => $data,
-      bottles => $bottles->fetchall_arrayref({}),
+      beer => $beer,
+      brewery => $brewery,
+      bottles => \@bottles,
     };
   } else {
     send_error('Beer not found', 404);
   }
+};
+
+get '/beer/:id/edit' => sub {
+  my $id = route_parameters->get('id');
+
+  my $beer = database->quick_select('beer', { beer_id => $id });
+  my $brewery = database->quick_select('brewery', { brewery_id => $beer->{brewery_id} });
+
+  template 'beer-form.tt', {
+    beer => $beer,
+    brewery => $brewery,
+    verb => 'Edit',
+  };
+};
+
+post '/beer/:id/edit' => sub {
+  my $id = route_parameters->get('id');
+
+  my $brewery_id = body_parameters->get('brewery_id');
+
+  unless ($brewery_id) {
+    my $name = body_parameters->get('brewery');
+    database->quick_insert('brewery', { name => $name });
+    $brewery_id = database->quick_lookup(brewery => { name => $name }, 'brewery_id');
+  }
+
+  database->quick_update(
+    'beer', { beer_id => $id },
+    {
+      name => body_parameters->get('name'),
+      year => body_parameters->get('year'),
+      brewery_id => $brewery_id,
+      style => body_parameters->get('style'),
+      abv => body_parameters->get('abv'),
+    }
+  );
+
+  redirect "/beer/$id";
 };
 
 del '/bottle/:id' => sub {
@@ -76,6 +105,10 @@ del '/bottle/:id' => sub {
   # TODO authorization
   database->quick_delete('bottle', { bottle_id => $id });
   send_error('', 204);
+};
+
+get '/beer' => sub {
+  template 'beer-form.tt', { verb => 'Add' };
 };
 
 dance;

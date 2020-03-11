@@ -10,7 +10,8 @@ sub find_or_create_brewery {
 
   unless ($id) {
     database->quick_insert('brewery', { name => $name });
-    my $id = database->last_insert_id();
+    debug("Inserting new brewery $name");
+    return database->last_insert_id();
   }
 
   return $id;

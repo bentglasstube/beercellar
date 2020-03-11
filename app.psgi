@@ -19,11 +19,16 @@ sub find_or_create_brewery {
 
 hook before_template_render => sub {
   my $tokens = shift;
-  $tokens->{q} = query_parameters->get('q');
+
+  $tokens->{sizes} = {
+    375 => 'Bottle',
+    473 => 'Pint',
+    650 => 'Bomber',
+    750 => '750',
+  };
 };
 
 get '/' => sub {
-
   my $where = '1';
   my @params = ();
 
@@ -53,6 +58,7 @@ get '/' => sub {
 
   template 'cellar.tt', {
     beers => $sth->fetchall_arrayref({}),
+    q => query_parameters->get('q'),
   };
 };
 

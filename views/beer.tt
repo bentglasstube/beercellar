@@ -19,7 +19,8 @@
   [% FOREACH bottle IN bottles %]
   <li>
     <button data-id="[% bottle.bottle_id %]" class="btn btn-outline-dark btn-sm">
-      <img src="/size[% bottle.size %].svg" alt="[% bottle.size %]">
+      [% size_name = sizes.item(bottle.size) %]
+      <img src="/size[% bottle.size %].svg" alt="[% size_name %]" title="[% size_name %]">
       [% bottle.location %]
     </button>
   </li>
@@ -32,10 +33,9 @@
 
   <label class="sr-only" for="size">Size</label>
   <select class="form-control mb-1 mr-sm-1" id="size" name="size">
-    <option value="375">Bottle</option>
-    <option value="473">Pint</option>
-    <option value="650" selected>Bomber</option>
-    <option value="750">750</option>
+    [% FOREACH size IN sizes.keys.sort %]
+    <option value="[% size %]">[% sizes.$size %]</option>
+    [% END %]
   </select>
   <label class="sr-only" for="loc">Location</label>
   <input type="text" class="form-control mb-1 mr-sm-1" id="loc" name="location" placeholder="Location">

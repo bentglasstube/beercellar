@@ -55,6 +55,17 @@ get '/' => sub {
   };
 };
 
+get '/beer' => sub {
+  template 'beer-form.tt', { verb => 'Add' };
+};
+
+post '/beer' => sub {
+  my %args = map { $_ => body_parameters->get($_) } qw[name year style abv];
+  $args{brewery_id} = find_or_create_brewery(body_parameters->get('brewery'));
+  database->quick_insert('beer', \%args);
+  redirect '/beer/' . database->last_insert_id();
+};
+
 get '/beer/:id' => sub {
   my $id = route_parameters->get('id');
 
@@ -74,15 +85,16 @@ get '/beer/:id' => sub {
   }
 };
 
-get '/beer' => sub {
-  template 'beer-form.tt', { verb => 'Add' };
-};
+post '/beer/:id' => sub {
+  my $id = route_parameters->get('id');
 
-post '/beer' => sub {
-  my %args = map { $_ => body_parameters->get($_) } qw[name year style abv];
-  $args{brewery_id} = find_or_create_brewery(body_parameters->get('brewery'));
-  database->quick_insert('beer', \%args);
-  redirect '/beer/' . database->last_insert_id();
+  database->quick_insert('bottle', {
+      beer_id => $id,
+      size => body_parameters->get('size'),
+      location => body_parameters->get('location'),
+    });
+
+  redirect "/beer/$id";
 };
 
 get '/beer/:id/edit' => sub {

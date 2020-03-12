@@ -5,7 +5,7 @@
       <th>Brewery</th>
       <th>Style</th>
       <th class="r">ABV</th>
-      <th class="r">Qty</th>
+      <th class="r">Bottles</th>
     </tr>
   </thead>
   <tbody>

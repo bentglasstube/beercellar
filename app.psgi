@@ -55,11 +55,19 @@ get '/' => sub {
     group by beer.beer_id
   });
   $sth->execute(@params);
+  my $beers = $sth->fetchall_arrayref({}),
+  $sth->finish();
 
-  template 'cellar.tt', {
-    beers => $sth->fetchall_arrayref({}),
-    q => query_parameters->get('q'),
-  };
+  if (@$beers == 1) {
+    my $id = $beers->[0]{id};
+    debug "Found single beer:";
+    redirect "/beer/$id";
+  } else {
+    template 'cellar.tt', {
+      beers => $beers,
+      q => query_parameters->get('q'),
+    };
+  }
 };
 
 get '/beer' => sub {

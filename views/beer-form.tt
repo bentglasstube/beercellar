@@ -33,7 +33,8 @@
   </div>
   <div class="form-row">
     <div class="form-group col-md-12">
-      <textarea class="form-control" rows="5" name="description">[% beer.description | html %]</textarea>
+      <label for="description">Description</label>
+      <textarea class="form-control" rows="5" id="description" name="description" required>[% beer.description | html %]</textarea>
     </div>
   </div>
   <div class="form-row">

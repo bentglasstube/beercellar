@@ -7,8 +7,10 @@ CREATE TABLE beer (
   name text not null,
   brewery_id integer not null references brewery (brewery_id),
   style text not null,
-  abv float not null
-, year integer);
+  abv real not null,
+  year integer,
+  description text not null
+);
 CREATE TABLE bottle (
   bottle_id integer primary key autoincrement,
   beer_id integer references beer (beer_id),

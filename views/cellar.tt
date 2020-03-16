@@ -1,17 +1,37 @@
+[% MACRO sortable_header(text, sortkey, classes) BLOCK %]
+<th[% IF classes %] class="[% classes %]"[% END %]>
+  <button class="btn btn-flat" data-sort="[% sortkey %]">
+    [% IF sortkey == sort %]
+      [% IF order == 'asc' %]&#x2191;[% ELSE %]&#x2193;[% END %]
+    [% END %]
+    [% text %]
+  </button>
+</th>
+[% END %]
+
+<form id="search" method="get">
+  <input type="hidden" id="q" name="q" value="[% q %]">
+  <input type="hidden" id="sort" name="sort" value="[% sort %]">
+  <input type="hidden" id="order" name="order" value="[% order %]">
+</form>
+
 <table id="beers" class="table table-sm table-hover">
   <thead>
     <tr>
-      <th>Beer</th>
-      <th>Brewery</th>
-      <th>Style</th>
-      <th class="r">ABV</th>
-      <th class="r">Bottles</th>
+      [% sortable_header('Beer', 'name') %]
+      [% sortable_header('Brewery', 'brewery') %]
+      [% sortable_header('Style', 'style') %]
+      [% sortable_header('ABV', 'abv', 'r') %]
+      [% sortable_header('Bottles', 'quantity', 'r') %]
     </tr>
   </thead>
   <tbody>
-    [% FOREACH beer IN beers.nsort('name') %]
+    [% FOREACH beer IN beers %]
     <tr>
-      <td><a href="/beer/[% beer.id %]">[% beer.name %][% IF beer.year %] ([% beer.year %])[% END %]</a></td>
+      <td><a href="/beer/[% beer.id %]">
+        [% beer.name %]
+        [% IF beer.year %] ([% beer.year %])[% END %]
+      </a></td>
       <td>[% beer.brewery %]</td>
       <td>[% beer.style %]</td>
       <td class="r">[% beer.abv | format('%.1f') %]%</td>

@@ -39,10 +39,23 @@ get '/' => sub {
     debug "Searching for beers matching $where (@params)";
   }
 
+  my $order_by = 'name';
+  if (my $sort = query_parameters->get('sort')) {
+    if ($sort =~ /^[a-zA-Z]+$/) {
+      $order_by = $sort;
+    }
+  }
+
+  if (query_parameters->get('order') eq 'desc') {
+    $order_by .= ' desc';
+  } else {
+    $order_by .= ' asc';
+  }
+
   my $sth = database->prepare(qq{
     select
       beer.beer_id as id,
-      beer.name,
+      beer.name as name,
       beer.year,
       brewery.name as brewery,
       beer.style,
@@ -53,6 +66,7 @@ get '/' => sub {
     join brewery using (brewery_id)
     where $where
     group by beer.beer_id
+    order by $order_by
   });
   $sth->execute(@params);
   my $beers = $sth->fetchall_arrayref({}),
@@ -66,6 +80,8 @@ get '/' => sub {
     template 'cellar.tt', {
       beers => $beers,
       q => query_parameters->get('q'),
+      sort => query_parameters->get('sort') // 'name',
+      order => query_parameters->get('order') // 'asc',
     };
   }
 };

@@ -17,6 +17,19 @@ sub find_or_create_brewery {
   return $id;
 }
 
+sub save_beer {
+  my $id = shift;
+
+  my %args = map { $_ => body_parameters->get($_) } qw[name year style abv description];
+  $args{brewery_id} = find_or_create_brewery(body_parameters->get('brewery'));
+
+  if (defined $id) {
+    database->quick_update('beer', { beer_id => $id }, \%args);
+  } else {
+    database->quick_insert('beer', \%args);
+  }
+}
+
 hook before_template_render => sub {
   my $tokens = shift;
 
@@ -91,9 +104,7 @@ get '/beer' => sub {
 };
 
 post '/beer' => sub {
-  my %args = map { $_ => body_parameters->get($_) } qw[name year style abv];
-  $args{brewery_id} = find_or_create_brewery(body_parameters->get('brewery'));
-  database->quick_insert('beer', \%args);
+  save_beer();
   redirect '/beer/' . database->last_insert_id();
 };
 
@@ -143,11 +154,7 @@ get '/beer/:id/edit' => sub {
 
 post '/beer/:id/edit' => sub {
   my $id = route_parameters->get('id');
-
-  my %args = map { $_ => body_parameters->get($_) } qw[name year style abv];
-  $args{brewery_id} = find_or_create_brewery(body_parameters->get('brewery'));
-  database->quick_update('beer', { beer_id => $id }, \%args);
-
+  save_beer($id);
   redirect "/beer/$id";
 };
 

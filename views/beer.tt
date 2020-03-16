@@ -14,7 +14,11 @@
   </div>
 </div>
 
-<p>[ TODO - add beer descriptions ]</p>
+[% IF beer.description %]
+[% beer.description | html | html_para %]
+[% ELSE %]
+<p><em>No description</em></p>
+[% END %]
 
 [% IF bottles %]
 <ul class="bottles">

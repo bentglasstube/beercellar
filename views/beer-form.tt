@@ -1,6 +1,7 @@
 <h1>[% verb %] Beer</h1>
 
 <form class="beer" method="post">
+  <input type="hidden" name="id" value="[% beer.beer_id %]">
   <div class="form-row">
     <div class="form-group col-md-8">
       <label for="name">Name</label>
@@ -28,6 +29,11 @@
           <span class="input-group-text">%</span>
         </div>
       </div>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-12">
+      <textarea class="form-control" rows="5" name="description">[% beer.description | html %]</textarea>
     </div>
   </div>
   <div class="form-row">

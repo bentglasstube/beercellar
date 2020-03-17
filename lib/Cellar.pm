@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+package Cellar;
 
 use Dancer2;
 use Dancer2::Plugin::Database;
@@ -188,4 +188,4 @@ del '/bottle/:id' => sub {
   send_error('', 204);
 };
 
-dance;
+1;

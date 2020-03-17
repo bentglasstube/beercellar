@@ -45,13 +45,6 @@ get '/' => sub {
   my $where = '1';
   my @params = ();
 
-  if (my $q = query_parameters->get('q')) {
-    $where = 'beer.name like ? or brewery.name like ? or beer.style like ?';
-    push @params, ("%$q%") x 3;
-
-    debug "Searching for beers matching $where (@params)";
-  }
-
   my $order_by = 'name';
   if (my $sort = query_parameters->get('sort')) {
     if ($sort =~ /^[a-zA-Z]+$/) {
@@ -65,24 +58,53 @@ get '/' => sub {
     $order_by .= ' asc';
   }
 
-  my $sth = database->prepare(qq{
-    select
-      beer.beer_id as id,
-      beer.name as name,
-      beer.year,
-      brewery.name as brewery,
-      beer.style,
-      beer.abv,
-      count(bottle.beer_id) as quantity
-    from bottle
-    join beer using (beer_id)
-    join brewery using (brewery_id)
-    where $where
-    group by beer.beer_id
-    order by $order_by
-  });
-  $sth->execute(@params);
-  my $beers = $sth->fetchall_arrayref({}),
+  my $sth;
+
+  if (my $q = query_parameters->get('q')) {
+    my $query = qq{
+      select
+        beer.beer_id as id,
+        fts.name as name,
+        beer.year,
+        fts.brewery,
+        fts.style,
+        beer.abv,
+        count(bottle.beer_id) as quantity
+      from fts
+      join beer on fts.rowid = beer.beer_id
+      left join bottle using (beer_id)
+      where fts = ?
+      group by beer.beer_id
+      order by $order_by
+    };
+
+    $sth = database->prepare($query);
+    $sth->execute($q);
+
+    debug "QUERY $query ($q)";
+
+  } else {
+
+    $sth = database->prepare(qq{
+      select
+        beer.beer_id as id,
+        beer.name as name,
+        beer.year,
+        brewery.name as brewery,
+        beer.style,
+        beer.abv,
+        count(bottle.beer_id) as quantity
+      from bottle
+      join beer using (beer_id)
+      join brewery using (brewery_id)
+      group by beer.beer_id
+      order by $order_by
+    });
+    $sth->execute();
+
+  }
+
+  my $beers = $sth->fetchall_arrayref({});
   $sth->finish();
 
   if (@$beers == 1) {

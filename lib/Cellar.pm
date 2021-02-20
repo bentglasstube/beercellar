@@ -39,6 +39,8 @@ hook before_template_render => sub {
     650 => 'Bomber',
     750 => '750',
   };
+
+  $tokens->{count} = database->quick_count('bottle', {});
 };
 
 get '/' => sub {

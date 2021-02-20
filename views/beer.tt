@@ -28,17 +28,19 @@
       [% size_name = sizes.item(bottle.size) %]
       <img src="/size[% bottle.size %].svg" alt="[% size_name %]" title="[% size_name %]">
       [% bottle.location %]
+      [% DEFAULT def_size = bottle.size %]
     </button>
   </li>
   [% END %]
 </ul>
 [% END %]
+[% DEFAULT def_size = '750' %]
 
 <form method="post" class="form-inline">
   <label class="sr-only" for="size">Size</label>
   <select class="form-control mb-1 mr-sm-1" id="size" name="size">
     [% FOREACH size IN sizes.keys.sort %]
-    <option value="[% size %]">[% sizes.$size %]</option>
+    <option value="[% size %]"[% IF size == def_size %] selected[% END %]>[% sizes.$size %]</option>
     [% END %]
   </select>
   <label class="sr-only" for="loc">Location</label>

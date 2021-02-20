@@ -44,7 +44,42 @@ hook before_template_render => sub {
 };
 
 get '/' => sub {
-  my $where = '1';
+  my $query = qq{
+    select
+      bottle.size,
+      bottle.bottle_id,
+      beer.beer_id,
+      beer.name,
+      beer.year,
+      brewery.name as brewery,
+      beer.abv,
+      beer.style
+    from bottle
+    inner join beer using (beer_id)
+    inner join brewery using (brewery_id)
+    where location = ?
+  };
+  my $sth = database->prepare($query);
+
+  my $shelves = [];
+  for my $n (1 .. 14) {
+    my $shelf = { name => "Shelf $n" };
+
+    $sth->execute($shelf->{name});
+    $shelf->{bottles} = $sth->fetchall_arrayref({});
+    $sth->finish();
+
+    my $count = scalar @{$shelf->{bottles}};
+
+    debug "Added $count bottles for $shelf->{name}";
+
+    push @$shelves, $shelf;
+  }
+
+  template 'shelves.tt', { shelves => $shelves };
+};
+
+get '/search' => sub {
   my @params = ();
 
   my $order_by = 'name';
@@ -60,51 +95,30 @@ get '/' => sub {
     $order_by .= ' asc';
   }
 
-  my $sth;
+  # TODO allow flag for including bottles
 
-  if (my $q = query_parameters->get('q')) {
-    my $query = qq{
-      select
-        beer.beer_id as id,
-        fts.name as name,
-        beer.year,
-        fts.brewery,
-        fts.style,
-        beer.abv,
-        count(bottle.beer_id) as quantity
-      from fts
-      join beer on fts.rowid = beer.beer_id
-      left join bottle using (beer_id)
-      where fts = ?
-      group by beer.beer_id
-      order by $order_by
-    };
+  my $q = query_parameters->get('q');
+  my $query = qq{
+    select
+      beer.beer_id as id,
+      fts.name as name,
+      beer.year,
+      fts.brewery,
+      fts.style,
+      beer.abv,
+      count(bottle.beer_id) as quantity
+    from fts
+    join beer on fts.rowid = beer.beer_id
+    left join bottle using (beer_id)
+    where fts = ?
+    group by beer.beer_id
+    order by $order_by
+  };
 
-    $sth = database->prepare($query);
-    $sth->execute($q);
+  my $sth = database->prepare($query);
+  $sth->execute($q);
 
-    debug "QUERY $query ($q)";
-
-  } else {
-
-    $sth = database->prepare(qq{
-      select
-        beer.beer_id as id,
-        beer.name as name,
-        beer.year,
-        brewery.name as brewery,
-        beer.style,
-        beer.abv,
-        count(bottle.beer_id) as quantity
-      from bottle
-      join beer using (beer_id)
-      join brewery using (brewery_id)
-      group by beer.beer_id
-      order by $order_by
-    });
-    $sth->execute();
-
-  }
+  debug "QUERY $query ($q)";
 
   my $beers = $sth->fetchall_arrayref({});
   $sth->finish();

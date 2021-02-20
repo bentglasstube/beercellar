@@ -33,10 +33,37 @@ h1 {
   margin: 1rem;
 }
 
-.bottles button img {
+button img {
   text-align: center;
   display: block;
   border: none;
   width: auto;
   height: 64px;
+}
+
+.shelf {
+  list-style: none;
+  display: flex;
+  padding-left: 0;
+  justify-content: start;
+  flex-wrap: wrap;
+}
+
+.shelf button {
+  float: left;
+  margin-right: 2em;
+}
+
+.shelf li {
+  display: inline-block;
+  min-width: 30em;
+  padding: 0.1em 1em;
+}
+
+.shelf li p {
+  margin: 0;
+}
+
+.shelf li p .r {
+  float: right;
 }

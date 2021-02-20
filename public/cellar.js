@@ -17,7 +17,7 @@ $(function() {
     }
   });
 
-  $('.bottles button').click(function(e) {
+  $('button[data-id]').click(function(e) {
     var btn = $(this)
     var id = btn.attr('data-id');
     $.ajax('/bottle/' + id, {

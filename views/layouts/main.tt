@@ -20,7 +20,7 @@
 
         <div class="navbar-text mx-auto">[% count %] / 140</div>
 
-        <form class="form-inline" method="get" action="/">
+        <form class="form-inline" method="get" action="/search">
           <div class="input-group">
             <input id="q" name="q" class="form-control" type="search" placeholder="Search" aria-label="Search" autofocus value="[% q %]">
             <div class="input-group-append">

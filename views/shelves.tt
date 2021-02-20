@@ -1,0 +1,21 @@
+[% FOREACH shelf IN shelves %]
+  <h2>[% shelf.name %]</h2>
+
+  [% IF shelf.bottles.empty %]
+    <div class="empty">Empty</div>
+  [% ELSE %]
+    <ul class="shelf">
+      [% FOREACH bottle IN shelf.bottles %]
+        <li>
+          <button data-id="[% bottle.bottle_id %]" class="btn btn-outline-danger btn-sm">
+            [% size_name = sizes.item(bottle.size) %]
+            <img src="/size[% bottle.size %].svg" alt="[% size_name %]" title="[% size_name %]">
+          </button>
+          <p><a href="/beer/[% bottle.beer_id %]">[% bottle.name %][% IF bottle.year %] ([% bottle.year %])[% END %]</a></p>
+          <p>[% bottle.brewery %]</p>
+          <p>[% bottle.style %]<span class="r">[% bottle.abv |format('%.1f') %]%</span></p>
+        </li>
+      [% END %]
+    </ul>
+  [% END %]
+[% END %]

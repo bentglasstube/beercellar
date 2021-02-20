@@ -67,3 +67,9 @@ button img {
 .shelf li p .r {
   float: right;
 }
+
+.empty {
+  color: #555;
+  font-style: oblique;
+  text-align: center;
+}

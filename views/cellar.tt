@@ -15,28 +15,32 @@
   <input type="hidden" id="order" name="order" value="[% order %]">
 </form>
 
-<table id="beers" class="table table-sm table-hover">
-  <thead>
-    <tr>
-      [% sortable_header('Beer', 'name') %]
-      [% sortable_header('Brewery', 'brewery') %]
-      [% sortable_header('Style', 'style') %]
-      [% sortable_header('ABV', 'abv', 'r') %]
-      [% sortable_header('Bottles', 'quantity', 'r') %]
-    </tr>
-  </thead>
-  <tbody>
-    [% FOREACH beer IN beers %]
-    <tr>
-      <td><a href="/beer/[% beer.id %]">
-        [% beer.name %]
-        [% IF beer.year %] ([% beer.year %])[% END %]
-      </a></td>
-      <td>[% beer.brewery %]</td>
-      <td>[% beer.style %]</td>
-      <td class="r">[% beer.abv | format('%.1f') %]%</td>
-      <td class="r">[% beer.quantity %]</td>
-    </tr>
-    [% END %]
-  </tbody>
-</table>
+[% IF beers.empty %]
+  <p class="empty">No matching beers</p>
+[% ELSE %]
+  <table id="beers" class="table table-sm table-hover">
+    <thead>
+      <tr>
+        [% sortable_header('Beer', 'name') %]
+        [% sortable_header('Brewery', 'brewery') %]
+        [% sortable_header('Style', 'style') %]
+        [% sortable_header('ABV', 'abv', 'r') %]
+        [% sortable_header('Bottles', 'quantity', 'r') %]
+      </tr>
+    </thead>
+    <tbody>
+      [% FOREACH beer IN beers %]
+      <tr>
+        <td><a href="/beer/[% beer.id %]">
+          [% beer.name %]
+          [% IF beer.year %] ([% beer.year %])[% END %]
+        </a></td>
+        <td>[% beer.brewery %]</td>
+        <td>[% beer.style %]</td>
+        <td class="r">[% beer.abv | format('%.1f') %]%</td>
+        <td class="r">[% beer.quantity %]</td>
+      </tr>
+      [% END %]
+    </tbody>
+  </table>
+[% END %]

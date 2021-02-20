@@ -2,7 +2,7 @@
   <h2>[% shelf.name %]</h2>
 
   [% IF shelf.bottles.empty %]
-    <div class="empty">Empty</div>
+    <p class="empty">No Beers</p>
   [% ELSE %]
     <ul class="shelf">
       [% FOREACH bottle IN shelf.bottles %]

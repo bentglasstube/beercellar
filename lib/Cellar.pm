@@ -128,6 +128,7 @@ get '/beer' => sub {
 };
 
 post '/beer' => sub {
+  # TODO authorization
   save_beer();
   redirect '/beer/' . database->last_insert_id();
 };
@@ -154,6 +155,7 @@ get '/beer/:id' => sub {
 post '/beer/:id' => sub {
   my $id = route_parameters->get('id');
 
+  # TODO authorization
   database->quick_insert('bottle', {
       beer_id => $id,
       size => body_parameters->get('size'),
@@ -177,6 +179,7 @@ get '/beer/:id/edit' => sub {
 };
 
 post '/beer/:id/edit' => sub {
+  # TODO authorization
   my $id = route_parameters->get('id');
   save_beer($id);
   redirect "/beer/$id";

@@ -8,30 +8,27 @@
     <title>Beer Cellar</title>
   </head>
   <body>
-    <div class="container">
-      <nav class="navbar fixed-top navbar-dark bg-dark navbar-expand-lg">
-        <a class="navbar-brand" href="/">Beer Cellar</a>
+    <nav class="navbar fixed-top navbar-dark bg-dark navbar-expand-lg">
+      <a class="navbar-brand" href="/">Beer Cellar</a>
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/beer">Add Beer</a>
+        </li>
+      </ul>
 
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="/beer">Add Beer</a>
-          </li>
-        </ul>
+      <div class="navbar-text mx-auto">[% count %] bottles</div>
 
-        <div class="navbar-text mx-auto">[% count %] / 140</div>
-
-        <form class="form-inline" method="get" action="/search">
-          <div class="input-group">
-            <input id="q" name="q" class="form-control" type="search" placeholder="Search" aria-label="Search" autofocus value="[% q %]">
-            <div class="input-group-append">
-              <button class="btn btn-primary" type="submit">&#x1F50D;</button>
-            </div>
+      <form class="form-inline ml-auto" method="get" action="/search">
+        <div class="input-group">
+          <input id="q" name="q" class="form-control" type="search" placeholder="Search" aria-label="Search" autofocus value="[% q %]">
+          <div class="input-group-append">
+            <button class="btn btn-primary" type="submit">&#x1F50D;</button>
           </div>
-        </form>
-      </nav>
+        </div>
+      </form>
+    </nav>
 
-      [% content %]
-    </div>
+    [% content %]
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="/cellar.js"></script>

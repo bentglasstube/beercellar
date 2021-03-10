@@ -1,49 +1,51 @@
-<h1>[% beer.name %][% IF beer.year %] - [% beer.year %][% END %]</h1>
+<div class="container">
+  <h1>[% beer.name %][% IF beer.year %] - [% beer.year %][% END %]</h1>
 
-<div class="card card-dark beer-info float-right">
-  <div class="card-body">
-    <dl>
-      <dt>Brewery</dt>
-      <dd>[% brewery.name %]</dd>
-      <dt>Style</dt>
-      <dd>[% beer.style %]</dd>
-      <dt>ABV</dt>
-      <dd>[% beer.abv |format('%.1f') %]%</dd>
-    </dl>
-    <a href="/beer/[% beer.beer_id %]/edit" class="card-link">Edit</a>
+  <div class="card card-dark beer-info float-right">
+    <div class="card-body">
+      <dl>
+        <dt>Brewery</dt>
+        <dd>[% brewery.name %]</dd>
+        <dt>Style</dt>
+        <dd>[% beer.style %]</dd>
+        <dt>ABV</dt>
+        <dd>[% beer.abv |format('%.1f') %]%</dd>
+      </dl>
+      <a href="/beer/[% beer.beer_id %]/edit" class="card-link">Edit</a>
+    </div>
   </div>
-</div>
 
-[% IF beer.description %]
-[% beer.description | html | html_para %]
-[% ELSE %]
-<p><em>No description</em></p>
-[% END %]
-
-[% IF bottles %]
-<ul class="bottles">
-  [% FOREACH bottle IN bottles %]
-  <li>
-    <button data-id="[% bottle.bottle_id %]" class="btn btn-outline-danger btn-sm">
-      [% size_name = sizes.item(bottle.size) %]
-      <img src="/size[% bottle.size %].svg" alt="[% size_name %]" title="[% size_name %]">
-      [% bottle.location %]
-      [% DEFAULT def_size = bottle.size %]
-    </button>
-  </li>
+  [% IF beer.description %]
+  [% beer.description | html | html_para %]
+  [% ELSE %]
+  <p><em>No description</em></p>
   [% END %]
-</ul>
-[% END %]
-[% DEFAULT def_size = '750' %]
 
-<form method="post" class="form-inline">
-  <label class="sr-only" for="size">Size</label>
-  <select class="form-control mb-1 mr-sm-1" id="size" name="size">
-    [% FOREACH size IN sizes.keys.sort %]
-    <option value="[% size %]"[% IF size == def_size %] selected[% END %]>[% sizes.$size %]</option>
+  [% IF bottles %]
+  <ul class="bottles">
+    [% FOREACH bottle IN bottles %]
+    <li>
+      <button data-id="[% bottle.bottle_id %]" class="btn btn-outline-danger btn-sm">
+        [% size_name = sizes.item(bottle.size) %]
+        <img src="/size[% bottle.size %].svg" alt="[% size_name %]" title="[% size_name %]">
+        [% bottle.location %]
+        [% DEFAULT def_size = bottle.size %]
+      </button>
+    </li>
     [% END %]
-  </select>
-  <label class="sr-only" for="loc">Location</label>
-  <input type="text" class="form-control mb-1 mr-sm-1" id="loc" name="location" placeholder="Location" required>
-  <button class="btn btn-primary mb-1">Add Bottle</button>
-</form>
+  </ul>
+  [% END %]
+  [% DEFAULT def_size = '750' %]
+
+  <form method="post" class="form-inline">
+    <label class="sr-only" for="size">Size</label>
+    <select class="form-control mb-1 mr-sm-1" id="size" name="size">
+      [% FOREACH size IN sizes.keys.sort %]
+      <option value="[% size %]"[% IF size == def_size %] selected[% END %]>[% sizes.$size %]</option>
+      [% END %]
+    </select>
+    <label class="sr-only" for="loc">Location</label>
+    <input type="text" class="form-control mb-1 mr-sm-1" id="loc" name="location" placeholder="Location" required>
+    <button class="btn btn-primary mb-1">Add Bottle</button>
+  </form>
+</div>
